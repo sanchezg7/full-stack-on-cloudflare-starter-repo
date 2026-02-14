@@ -5,15 +5,32 @@ import { LinkClickMessageType } from "@repo/data-ops/zod-schema/queue";
 
 export const App = new Hono<{Bindings: Env}>();
 
+// This was the original version of this which was a hello world of the DO
+// App.get("/do/:name", async (c) => {
+// 	const name = c.req.param("name");
+// 	const doId = c.env.EVALUATION_SCHEDULER.idFromName(name);
+//
+//
+// 	const stub = c.env.EVALUATION_SCHEDULER.get(doId);
+// 	// we now have an instance of the DO
+// 	await stub.increment();
+//
+// 	const count = await stub.getCount();
+//
+// 	return c.json({
+// 		count
+// 	});
+// })
+
 /**
  * We redirect the user AND kick off a fire and forget event on the queue so that this redirect is fast as possible
  * We ensure the change is still tracked but we decouple the speed to process that from the actual redirect.
  * This is the magic of queues
  */
 App.get('/:id', async (c) => {
-	const id = c.req.param('id');
-	const link = await getRoutingDestinations(c.env, id)
-	if(!link){
+	const linkId = c.req.param('id');
+	const linkInfo = await getRoutingDestinations(c.env, linkId)
+	if(!linkInfo){
 		return c.text('Destination not found', 404);
 	}
 	const cfHeader = cloudflareInfoSchema.safeParse(c.req.raw.cf);
@@ -22,16 +39,16 @@ App.get('/:id', async (c) => {
 	}
 
 	const headers = cfHeader.data;
-	const destination = getDestinationForCountry(link, headers.country);
+	const destination = getDestinationForCountry(linkInfo, headers.country);
 
 	const queueMessage: LinkClickMessageType = {
 		"type": "LINK_CLICK",
 		"data": {
-			id: id,
-			// I just this to make the type happy, not sure what it's for or if it's the right field.
-			accountId: id,
+			id: linkId,
 			country: headers.country,
-			destination:  link.accountId,
+			destination: destination,
+			// I just this to make the type happy, not sure what it's for or if it's the right field.
+			accountId: linkInfo.accountId,
 			latitude: headers.latitude,
 			longitude: headers.longitude,
 			timestamp: new Date().toISOString(),
