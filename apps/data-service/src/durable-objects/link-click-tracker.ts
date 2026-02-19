@@ -66,7 +66,7 @@ export class LinkClickTracker extends DurableObject {
 	async alarm() {
 		console.log('[link-click-tracker] alarm!!!!!')
 		const clickData = getRecentClicks(this.sql, this.mostRecentOffsetTime);
-		console.log('[link-click-tracker] alarm!!!!! clickData', JSON.stringify(clickData));
+		console.log('[link-click-tracker] clickData:', JSON.stringify(clickData));
 
 		const sockets = this.ctx.getWebSockets();
 		for (const socket of sockets) {
@@ -74,8 +74,8 @@ export class LinkClickTracker extends DurableObject {
 			socket.send(JSON.stringify(clickData.clicks));
 		}
 
-		await this.flushOffsetTimes(clickData.mostRecentTime, clickData.oldestTime);
-		deleteClicksBefore(this.sql, clickData.oldestTime)
+		// await this.flushOffsetTimes(clickData.mostRecentTime, clickData.oldestTime);
+		// deleteClicksBefore(this.sql, clickData.oldestTime)
 	}
 
 	async flushOffsetTimes(mostRecentOffsetTime: number, leastRecentOffsetTime: number) {
