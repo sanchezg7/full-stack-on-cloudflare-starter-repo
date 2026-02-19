@@ -22,6 +22,20 @@ export const App = new Hono<{Bindings: Env}>();
 // 	});
 // })
 
+
+App.get('/click-socket', async (c) => {
+	const upgradeHeader = c.req.header('Upgrade');
+	if (!upgradeHeader || upgradeHeader !== 'websocket') {
+		return c.text('Expected Upgrade: websocket', 426);
+	}
+
+	// headers because then you can extend custom auth as well, here (instead of passing via param)
+	const accountId = c.req.header('12345')
+	if (!accountId) return  c.text('No Headers', 404);
+	const doId = c.env.LINK_CLICK_TRACKER_OBJECT.idFromName(accountId);
+	const stub = c.env.LINK_CLICK_TRACKER_OBJECT.get(doId);
+	return await stub.fetch(c.req.raw)
+})
 /**
  * We redirect the user AND kick off a fire and forget event on the queue so that this redirect is fast as possible
  * We ensure the change is still tracked but we decouple the speed to process that from the actual redirect.
@@ -76,19 +90,6 @@ App.get('/:id', async (c) => {
 // 	return await stub.fetch(c.req.raw)
 // })
 
-App.get('/click-socket', async (c) => {
-	const upgradeHeader = c.req.header('Upgrade');
-	if (!upgradeHeader || upgradeHeader !== 'websocket') {
-		return c.text('Expected Upgrade: websocket', 426);
-	}
-
-	// headers because then you can extend custom auth as well, here (instead of passing via param)
-	const accountId = c.req.header('account-id')
-	if (!accountId) return  c.text('No Headers', 404);
-	const doId = c.env.LINK_CLICK_TRACKER_OBJECT.idFromName(accountId);
-	const stub = c.env.LINK_CLICK_TRACKER_OBJECT.get(doId);
-	return await stub.fetch(c.req.raw)
-})
 
 // -----------
 // we are starting over with a more simple solution
