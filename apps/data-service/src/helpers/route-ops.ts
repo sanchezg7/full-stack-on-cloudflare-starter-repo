@@ -6,10 +6,8 @@ import moment from 'moment';
 async function getLinkInfoFromKv(env: Env, id: string) {
 	const linkInfo = await env.CACHE.get(id)
 	if (!linkInfo) {
-		console.log(`No link info found for id: ${id}`);
 		return null;
 	}
-	console.log(`Link info found for id: ${id}`);
 	try {
 		const parsedLinkInfo = JSON.parse(linkInfo);
 		return linkSchema.parse(parsedLinkInfo);
@@ -29,7 +27,6 @@ async function saveLinkInfoToKv(env: Env, linkId: string, linkInfo: LinkSchemaTy
 			}
 		);
 	} catch (error) {
-		console.error('Error saving link info to KV:', error);
 	}
 }
 
@@ -61,19 +58,12 @@ export function getDestinationForCountry(linkInfo: LinkSchemaType, countryCode?:
 }
 
 export async function captureLinkClickInBackground(env: Env, event: LinkClickMessageType) {
-	console.log('[route-ops] captureLinkClickInBackground event:', JSON.stringify(event));
 	await env.QUEUE.send(event)
 	const doId = env.LINK_CLICK_TRACKER_OBJECT.idFromName(event.data.accountId);
 	const stub = env.LINK_CLICK_TRACKER_OBJECT.get(doId);
 	if (!event.data.latitude || !event.data.longitude || !event.data.country) {
-		console.log('[route-ops] captureLinkClickInBackground: missing geo data', {
-			lat: event.data.latitude,
-			lng: event.data.longitude,
-			country: event.data.country
-		});
 		return;
 	}
-	console.log('[route-ops] captureLinkClickInBackground: calling stub.addClick');
 	await stub.addClick(
 		event.data.latitude,
 		event.data.longitude,
@@ -82,5 +72,4 @@ export async function captureLinkClickInBackground(env: Env, event: LinkClickMes
 		// this was moment().valueOf() but I didn't want that
 		// new Date().getDate()
 	)
-	console.log('[route-ops] captureLinkClickInBackground: stub.addClick called');
 }

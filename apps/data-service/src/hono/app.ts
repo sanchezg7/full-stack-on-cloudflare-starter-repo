@@ -33,8 +33,6 @@ App.get('/click-socket', async (c) => {
 	const accountId = '12345';// c.req.header('accound-id')
 	if (!accountId) return  c.text('No Headers', 404);
 	const doId = c.env.LINK_CLICK_TRACKER_OBJECT.idFromName(accountId);
-	console.log('using accountId for DO: ', accountId)
-	console.log('using doId for stub: ', doId)
 	const stub = c.env.LINK_CLICK_TRACKER_OBJECT.get(doId);
 	return await stub.fetch(c.req.raw)
 })

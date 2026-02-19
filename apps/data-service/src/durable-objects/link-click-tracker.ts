@@ -9,7 +9,6 @@ export class LinkClickTracker extends DurableObject {
 
 	constructor(ctx: DurableObjectState, env: Env) {
 		super(ctx, env);
-		console.log('[link-click-tracker] constructing LinkClickTracker')
 		this.sql = ctx.storage.sql;
 
 		ctx.blockConcurrencyWhile(async () => {
@@ -30,14 +29,10 @@ export class LinkClickTracker extends DurableObject {
                 )
             `);
 		})
-		console.log('constructed LinkClickTracker')
-
-
 	}
 
 	async addClick(latitude: number, longitude: number, country: string, time: number) {
-		console.log('[link-click-tracker] addClick!!!!!')
-		console.log('[link-click-tracker] addClick!!!!! latitude', latitude, 'longitude', longitude, 'country', country, 'time', time)
+		console.log('[link-click-tracker] addClick started with params:', { latitude, longitude, country, time });
 
 		try {
 			const cursor = this.sql.exec(
@@ -50,10 +45,13 @@ export class LinkClickTracker extends DurableObject {
 				country,
 				time,
 			);
-			console.log('[link-click-tracker] addClick execution complete')
+			console.log('[link-click-tracker] addClick INSERT cursor:', JSON.stringify(cursor));
 
-			const totalCount = this.sql.exec('SELECT COUNT(*) FROM geo_link_clicks').one();
-			console.log('[link-click-tracker] addClick: totalCount in geo_link_clicks table', JSON.stringify(totalCount));
+			const totalCount = this.sql.exec('SELECT COUNT(*) as count FROM geo_link_clicks').one();
+			console.log('[link-click-tracker] addClick: totalCount in geo_link_clicks table:', JSON.stringify(totalCount));
+
+			const lastInserted = this.sql.exec('SELECT * FROM geo_link_clicks WHERE time = ? AND country = ? LIMIT 1', time, country).toArray();
+			console.log('[link-click-tracker] addClick: verification SELECT result:', JSON.stringify(lastInserted));
 
 		} catch (error) {
 			console.error('[link-click-tracker] addClick ERROR:', error);
@@ -66,13 +64,10 @@ export class LinkClickTracker extends DurableObject {
 	}
 
 	async alarm() {
-		console.log('[link-click-tracker] alarm!!!!!')
 		const clickData = getRecentClicks(this.sql, this.mostRecentOffsetTime);
-		console.log('[link-click-tracker] clickData:', JSON.stringify(clickData));
 
 		const sockets = this.ctx.getWebSockets();
 		for (const socket of sockets) {
-			console.log('sending to socket:', socket.url)
 			socket.send(JSON.stringify(clickData.clicks));
 		}
 
@@ -81,7 +76,6 @@ export class LinkClickTracker extends DurableObject {
 	}
 
 	async flushOffsetTimes(mostRecentOffsetTime: number, leastRecentOffsetTime: number) {
-		console.log('[link-click-tracker] flushing offset times!!!!!')
 		this.mostRecentOffsetTime = mostRecentOffsetTime;
 		this.leastRecentOffsetTime = leastRecentOffsetTime;
 		await this.ctx.storage.put('mostRecentOffsetTime', this.mostRecentOffsetTime);
@@ -89,11 +83,9 @@ export class LinkClickTracker extends DurableObject {
 	}
 
 	async fetch(_: Request) {
-		console.log('[link-click-tracker] fetching')
 		const sockets = this.ctx.getWebSockets();
 		const clickData = getRecentClicks(this.sql);
 		for (const socket of sockets) {
-			console.log('sending to socket:', socket.url)
 			socket.send(JSON.stringify(clickData.clicks));
 		}
 		const webSocketPair = new WebSocketPair();
@@ -106,6 +98,5 @@ export class LinkClickTracker extends DurableObject {
 	}
 
 	webSocketClose(ws: WebSocket, code: number, reason: string, wasClean: boolean): void | Promise<void> {
-		console.log('[link-click-tracker] client closed')
 	}
 }
