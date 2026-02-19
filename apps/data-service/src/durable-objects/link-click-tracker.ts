@@ -33,6 +33,24 @@ export class LinkClickTracker extends DurableObject {
 			country,
 			time,
 		);
+		const alarm = await this.ctx.storage.getAlarm()
+		if(!alarm) {
+			// alarm isn't delayed more than 2 secs
+			await this.ctx.storage.setAlarm(Date.now() + 2000);
+		}
+	}
+
+	async alarm() {
+		console.log('alarm');
+
+		// we want to iterate through active connections and send data
+		const sockets = this.ctx.getWebSockets();
+		for (const socket of sockets) {
+			socket.send(JSON.stringify({
+				type: 'CLICK_DATA',
+				data: await this.sql.exec(``)
+			}))
+		}
 	}
 
 	// async fetch(_: Request) {
