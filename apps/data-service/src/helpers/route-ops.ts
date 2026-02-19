@@ -59,7 +59,8 @@ export function getDestinationForCountry(linkInfo: LinkSchemaType, countryCode?:
 
 export async function captureLinkClickInBackground(env: Env, event: LinkClickMessageType) {
 	await env.QUEUE.send(event)
-	const doId = env.LINK_CLICK_TRACKER_OBJECT.idFromName(event.data.accountId);
+	// const doId = env.LINK_CLICK_TRACKER_OBJECT.idFromName(event.data.accountId);
+	const doId = env.LINK_CLICK_TRACKER_OBJECT.idFromName('12345');
 	const stub = env.LINK_CLICK_TRACKER_OBJECT.get(doId);
 	if (!event.data.latitude || !event.data.longitude || !event.data.country) {
 		return;
