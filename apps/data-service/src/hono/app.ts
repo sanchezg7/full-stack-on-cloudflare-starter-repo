@@ -30,7 +30,7 @@ App.get('/click-socket', async (c) => {
 	}
 
 	// headers because then you can extend custom auth as well, here (instead of passing via param)
-	const accountId = c.req.header('12345')
+	const accountId = 12345// c.req.header('accound-id')
 	if (!accountId) return  c.text('No Headers', 404);
 	const doId = c.env.LINK_CLICK_TRACKER_OBJECT.idFromName(accountId);
 	const stub = c.env.LINK_CLICK_TRACKER_OBJECT.get(doId);
