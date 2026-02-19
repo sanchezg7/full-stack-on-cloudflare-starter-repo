@@ -70,6 +70,7 @@ export class LinkClickTracker extends DurableObject {
 
 		const sockets = this.ctx.getWebSockets();
 		for (const socket of sockets) {
+			console.log('sending to socket:', socket.url)
 			socket.send(JSON.stringify(clickData.clicks));
 		}
 
