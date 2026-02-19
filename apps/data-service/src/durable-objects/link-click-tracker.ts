@@ -58,9 +58,13 @@ export class LinkClickTracker extends DurableObject {
 	// }
 	async fetch(_: Request) {
 		const webSocketPair = new WebSocketPair();
+		// 0 index is always client
 		const [client, server] = Object.values(webSocketPair);
+		// the websocket is now accepted by DO, binding this instance of the server
 		this.ctx.acceptWebSocket(server)
+		// establish 2-way connection with client and server
 		return new Response(null, {
+			// websocket status to keep connection open (client to NOT close connection)
 			status: 101,
 			webSocket: client
 		})
