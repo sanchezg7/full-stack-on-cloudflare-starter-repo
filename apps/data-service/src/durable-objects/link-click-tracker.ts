@@ -9,6 +9,7 @@ export class LinkClickTracker extends DurableObject {
 
 	constructor(ctx: DurableObjectState, env: Env) {
 		super(ctx, env);
+		console.log('[link-click-tracker] constructing LinkClickTracker')
 		this.sql = ctx.storage.sql;
 
 		ctx.blockConcurrencyWhile(async () => {
@@ -29,9 +30,11 @@ export class LinkClickTracker extends DurableObject {
                 )
             `);
 		})
+		console.log('constructed LinkClickTracker')
 	}
 
 	async addClick(latitude: number, longitude: number, country: string, time: number) {
+		console.log('[link-click-tracker] addClick!!!!!')
 		this.sql.exec(
 			`
 			INSERT INTO geo_link_clicks (latitude, longitude, country, time)
@@ -47,7 +50,7 @@ export class LinkClickTracker extends DurableObject {
 	}
 
 	async alarm() {
-		console.log('alarm')
+		console.log('[link-click-tracker] alarm!!!!!')
 		const clickData = getRecentClicks(this.sql, this.mostRecentOffsetTime);
 
 		const sockets = this.ctx.getWebSockets();
@@ -56,11 +59,11 @@ export class LinkClickTracker extends DurableObject {
 		}
 
 		await this.flushOffsetTimes(clickData.mostRecentTime, clickData.oldestTime);
-		await deleteClicksBefore(this.sql, clickData.oldestTime)
-
+		deleteClicksBefore(this.sql, clickData.oldestTime)
 	}
 
 	async flushOffsetTimes(mostRecentOffsetTime: number, leastRecentOffsetTime: number) {
+		console.log('[link-click-tracker] flushing offset times!!!!!')
 		this.mostRecentOffsetTime = mostRecentOffsetTime;
 		this.leastRecentOffsetTime = leastRecentOffsetTime;
 		await this.ctx.storage.put('mostRecentOffsetTime', this.mostRecentOffsetTime);
@@ -68,6 +71,7 @@ export class LinkClickTracker extends DurableObject {
 	}
 
 	async fetch(_: Request) {
+		console.log('[link-click-tracker] fetching')
 		const webSocketPair = new WebSocketPair();
 		const [client, server] = Object.values(webSocketPair);
 		this.ctx.acceptWebSocket(server)
@@ -78,6 +82,6 @@ export class LinkClickTracker extends DurableObject {
 	}
 
 	webSocketClose(ws: WebSocket, code: number, reason: string, wasClean: boolean): void | Promise<void> {
-		console.log("client closed")
+		console.log('[link-click-tracker] client closed')
 	}
 }

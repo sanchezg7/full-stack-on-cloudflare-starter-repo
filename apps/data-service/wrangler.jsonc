@@ -28,8 +28,7 @@
 	"r2_buckets": [
 		{
 			"binding": "BUCKET",
-			"bucket_name": "smart-links-eval-stage",
-
+			"bucket_name": "smart-links-eval-stage"
 		}
 	],
 	"kv_namespaces": [
