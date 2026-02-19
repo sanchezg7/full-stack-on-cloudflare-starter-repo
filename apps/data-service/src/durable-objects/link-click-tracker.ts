@@ -31,6 +31,13 @@ export class LinkClickTracker extends DurableObject {
             `);
 		})
 		console.log('constructed LinkClickTracker')
+
+		const sockets = this.ctx.getWebSockets();
+		const clickData = getRecentClicks(this.sql);
+		for (const socket of sockets) {
+			console.log('sending to socket:', socket.url)
+			socket.send(JSON.stringify(clickData.clicks));
+		}
 	}
 
 	async addClick(latitude: number, longitude: number, country: string, time: number) {
