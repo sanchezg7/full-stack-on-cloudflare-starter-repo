@@ -35,25 +35,50 @@ export class LinkClickTracker extends DurableObject {
 		);
 	}
 
+	// async fetch(_: Request) {
+	// 	const query = `
+	// 		SELECT *
+	// 		FROM geo_link_clicks
+	// 		limit 100
+	// 	`;
+	//
+	// 	const cursor = this.sql.exec(query);
+	// 	const results = cursor.toArray();
+	//
+	// 	return new Response(
+	// 		JSON.stringify({
+	// 			clicks: results,
+	// 		}),
+	// 		{
+	// 			headers: {
+	// 				'Content-Type': 'application/json',
+	// 			},
+	// 		},
+	// 	);
+	// }
 	async fetch(_: Request) {
-		const query = `
-			SELECT *
-			FROM geo_link_clicks
-			limit 100
-		`;
-
-		const cursor = this.sql.exec(query);
-		const results = cursor.toArray();
-
-		return new Response(
-			JSON.stringify({
-				clicks: results,
-			}),
-			{
-				headers: {
-					'Content-Type': 'application/json',
-				},
-			},
-		);
+		const webSocketPair = new WebSocketPair();
+		const [client, server] = Object.values(webSocketPair);
+		this.ctx.acceptWebSocket(server)
+		return new Response(null, {
+			status: 101,
+			webSocket: client
+		})
 	}
+
+	// /**
+	//  * You can pass in the message that was received
+	//  * @param ws
+	//  * @param message
+	//  */
+	// async webSocketMessage(ws: WebSocket, message: string | ArrayBuffer){
+	// 	const connections = this.ctx.getWebSockets();
+	// 	// broadcast to all of the connected clients
+	// 	// this would be good for interactive apps
+	// 	for(const con of connections) {
+	// 		// don't send back to the same person that sent the message
+	// 		// if con === ws
+	// 		await con.send(message);
+	// 	}
+	// }
 }
