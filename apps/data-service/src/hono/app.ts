@@ -77,6 +77,13 @@ App.get('/:id', async (c) => {
 	return c.redirect(destination);
 })
 
+App.get('/link-click/:accountId', async (c) => {
+	const accountId = c.req.param('accountId')
+	const doId = c.env.LINK_CLICK_TRACKER_OBJECT.idFromName(accountId);
+	const stub = c.env.LINK_CLICK_TRACKER_OBJECT.get(doId);
+	return await stub.fetch(c.req.raw)
+})
+
 // -----------
 // we are starting over with a more simple solution
 // /**
