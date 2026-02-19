@@ -51,6 +51,7 @@ App.get('/:id', async (c) => {
 	}
 	const cfHeader = cloudflareInfoSchema.safeParse(c.req.raw.cf);
 	if(cfHeader.success === false){
+		console.log('[hono-app] Invalid CF header:', JSON.stringify(c.req.raw.cf), 'error:', cfHeader.error);
 		return c.text('Invalid CF header', 400);
 	}
 
