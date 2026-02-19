@@ -72,6 +72,7 @@ App.get('/link-click/:accountId', async (c) => {
 	const accountId = c.req.param('accountId')
 	const doId = c.env.LINK_CLICK_TRACKER_OBJECT.idFromName(accountId);
 	const stub = c.env.LINK_CLICK_TRACKER_OBJECT.get(doId);
+	// it's a fetch because it's actually a special type of compute. we send the raw request
 	return await stub.fetch(c.req.raw)
 })
 

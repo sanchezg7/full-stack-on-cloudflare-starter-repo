@@ -100,7 +100,8 @@
 		// I added this version when i added the new class, I guesss this is how this works
 		{
 			"tag": "v2",
-			"new_classes": [
+			// because it's a sqlite backed class
+			"new_sqlite_classes": [
 				"LinkClickTracker"
 			]
 		}
