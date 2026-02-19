@@ -53,7 +53,7 @@ export class LinkClickTracker extends DurableObject {
 	}
 
 	async alarm() {
-		console.log('alarm');
+		console.log('link-click-tracker-alarm');
 
 		const clickData = getRecentClicks(this.sql, this.mostRecentOffsetTime);
 		// we want to iterate through active connections and send data
