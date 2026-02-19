@@ -1,16 +1,13 @@
 import { durableObjectGeoClickArraySchema } from '@repo/data-ops/zod-schema/links';
 
-/**
- * limit by a certain amount
- */
 export function getRecentClicks(sqlStorage: SqlStorage, offsetTime: number = 0, limit: number = 50) {
 	const query = `
-				SELECT latitude, longitude, country, time
-				FROM geo_link_clicks
-				WHERE time > ?
-				ORDER BY time DESC
-				LIMIT ?
-		`;
+		SELECT latitude, longitude, country, time
+		FROM geo_link_clicks
+		WHERE time > ?
+		ORDER BY time DESC
+			LIMIT ?
+	`;
 
 	const cursor = sqlStorage.exec(query, offsetTime, limit);
 
@@ -24,9 +21,9 @@ export function getRecentClicks(sqlStorage: SqlStorage, offsetTime: number = 0, 
 
 export function deleteClicksBefore(sqlStorage: SqlStorage, time: number) {
 	const query = `
-        DELETE FROM geo_link_clicks
-        WHERE time < ?
-        `;
+		DELETE FROM geo_link_clicks
+		WHERE time < ?
+	`;
 
 	sqlStorage.exec(query, time);
 }
