@@ -82,6 +82,7 @@ App.get('/click-socket', async (c) => {
 		return c.text('Expected Upgrade: websocket', 426);
 	}
 
+	// headers because then you can extend custom auth as well, here (instead of passing via param)
 	const accountId = c.req.header('account-id')
 	if (!accountId) return  c.text('No Headers', 404);
 	const doId = c.env.LINK_CLICK_TRACKER_OBJECT.idFromName(accountId);
