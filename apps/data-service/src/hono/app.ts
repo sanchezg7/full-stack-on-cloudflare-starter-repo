@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 import { cloudflareInfoSchema } from "@repo/data-ops/zod-schema/links";
-import {getDestinationForCountry, getRoutingDestinations} from "@/helpers/route-ops";
+import {captureLinkClickInBackground, getDestinationForCountry, getRoutingDestinations} from "@/helpers/route-ops";
 import { LinkClickMessageType } from "@repo/data-ops/zod-schema/queue";
 
 export const App = new Hono<{Bindings: Env}>();
@@ -62,16 +62,7 @@ App.get('/:id', async (c) => {
 	 it's great for less critical tasks like analytics
 	 */
 	c.executionCtx.waitUntil(
-		c.env.QUEUE.send(queueMessage, {
-			// You won't have to parse this if you specify it. The lib will do it for you
-			// contentType: "json",
-			/**
-			// the data goes to the queue but isn't processed by the consumer. E.g. twilio api to send sms texts
-			 * Stick the twilio id in the queue. and then wait 10 minutes
-			 * You can then check the id in the future to see how the twilio message is in state
-			 */
-			// delaySeconds: 10 * 66
-		})
+		captureLinkClickInBackground(c.env, queueMessage)
 	)
 
 	return c.redirect(destination);
