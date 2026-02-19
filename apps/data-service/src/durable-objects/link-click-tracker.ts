@@ -1,13 +1,25 @@
 import { DurableObject } from "cloudflare:workers";
+import {deleteClicksBefore, getRecentClicks} from "@/helpers/durable-queries";
 
 export class LinkClickTracker extends DurableObject {
 	// the storage api
 	sql: SqlStorage;
+
+	leastRecentOffsetTime: number = 0;
+	mostRecentOffsetTime: number = 0;
 	constructor(ctx: DurableObjectState, env: Env) {
 		super(ctx, env);
 		this.sql = ctx.storage.sql;
 
 		ctx.blockConcurrencyWhile(async () => {
+			const [leastRecentOffsetTime, mostRecentOffsetTime] = await Promise.all([
+				ctx.storage.get<number>('leastRecentOffsetTime'),
+				ctx.storage.get<number>('mostRecentOffsetTime'),
+			]);
+
+			this.leastRecentOffsetTime = leastRecentOffsetTime || this.leastRecentOffsetTime;
+			this.mostRecentOffsetTime = mostRecentOffsetTime || this.mostRecentOffsetTime;
+
 			// make sure the schema is in sync before the DO does anything
 			this.sql.exec(`
 				CREATE TABLE IF NOT EXISTS geo_link_clicks (
@@ -43,14 +55,25 @@ export class LinkClickTracker extends DurableObject {
 	async alarm() {
 		console.log('alarm');
 
+		const clickData = getRecentClicks(this.sql, this.mostRecentOffsetTime);
 		// we want to iterate through active connections and send data
 		const sockets = this.ctx.getWebSockets();
 		for (const socket of sockets) {
-			socket.send(JSON.stringify({
-				type: 'CLICK_DATA',
-				data: await this.sql.exec(``)
-			}))
+			socket.send(JSON.stringify(clickData.clicks));
 		}
+
+		await this.flushOffsetTimes(clickData.mostRecentTime, clickData.oldestTime);
+		await deleteClicksBefore(this.sql, clickData.oldestTime)
+	}
+
+	/**
+	 * Move them from memory into storage so we have the window
+	 */
+	async flushOffsetTimes(mostRecentOffsetTime: number, leastRecentOffsetTime: number) {
+		this.mostRecentOffsetTime = mostRecentOffsetTime;
+		this.leastRecentOffsetTime = leastRecentOffsetTime;
+		await this.ctx.storage.put('mostRecentOffsetTime', this.mostRecentOffsetTime);
+		await this.ctx.storage.put('leastRecentOffsetTime', this.leastRecentOffsetTime);
 	}
 
 	// async fetch(_: Request) {
