@@ -83,14 +83,14 @@ export class LinkClickTracker extends DurableObject {
 	}
 
 	async fetch(_: Request) {
-		const sockets = this.ctx.getWebSockets();
-		const clickData = getRecentClicks(this.sql);
-		for (const socket of sockets) {
-			socket.send(JSON.stringify(clickData.clicks));
-		}
 		const webSocketPair = new WebSocketPair();
 		const [client, server] = Object.values(webSocketPair);
-		this.ctx.acceptWebSocket(server)
+
+		this.ctx.acceptWebSocket(server);
+
+		const clickData = getRecentClicks(this.sql);
+		server.send(JSON.stringify(clickData.clicks));
+
 		return new Response(null, {
 			status: 101,
 			webSocket: client
