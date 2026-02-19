@@ -1,6 +1,7 @@
 import { getLink } from "@repo/data-ops/queries/links";
 import { linkSchema, LinkSchemaType } from "@repo/data-ops/zod-schema/links";
 import { LinkClickMessageType } from '@repo/data-ops/zod-schema/queue';
+import moment from 'moment';
 
 async function getLinkInfoFromKv(env: Env, id: string) {
 	const linkInfo = await env.CACHE.get(id)
@@ -68,7 +69,8 @@ export async function captureLinkClickInBackground(env: Env, event: LinkClickMes
 		event.data.latitude,
 		event.data.longitude,
 		event.data.country,
+		moment().valueOf()
 		// this was moment().valueOf() but I didn't want that
-		new Date().getDate()
+		// new Date().getDate()
 	)
 }

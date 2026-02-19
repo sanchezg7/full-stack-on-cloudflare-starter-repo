@@ -35,6 +35,7 @@ export class LinkClickTracker extends DurableObject {
 
 	async addClick(latitude: number, longitude: number, country: string, time: number) {
 		console.log('[link-click-tracker] addClick!!!!!')
+		console.log('[link-click-tracker] addClick!!!!! latitude', latitude, 'longitude', longitude, 'country', country, 'time', time)
 		this.sql.exec(
 			`
 			INSERT INTO geo_link_clicks (latitude, longitude, country, time)
@@ -45,6 +46,8 @@ export class LinkClickTracker extends DurableObject {
 			country,
 			time,
 		);
+		// the alarm is the buffer
+		// instead of sending 5k events every second, we wait for 2s to send all the events in a chunk
 		const alarm = await this.ctx.storage.getAlarm();
 		if (!alarm) await this.ctx.storage.setAlarm(moment().add(2, 'seconds').valueOf());
 	}
@@ -52,6 +55,7 @@ export class LinkClickTracker extends DurableObject {
 	async alarm() {
 		console.log('[link-click-tracker] alarm!!!!!')
 		const clickData = getRecentClicks(this.sql, this.mostRecentOffsetTime);
+		console.log('[link-click-tracker] alarm!!!!! clickData', clickData)
 
 		const sockets = this.ctx.getWebSockets();
 		for (const socket of sockets) {
