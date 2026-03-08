@@ -10,8 +10,6 @@ export const links = sqliteTable("links", {
 	name: text().notNull(),
 });
 
-export type Link = typeof links.$inferSelect
-
 export const linkClicks = sqliteTable("link_clicks", {
 	id: text().notNull(),
 	accountId: text("account_id").notNull(),
@@ -34,4 +32,6 @@ export const destinationEvaluations = sqliteTable("destination_evaluations", {
 (table) => [
 	index("idx_destination_evaluations_account_time").on(table.accountId, table.createdAt),
 ]);
+
+export type Link = typeof links.$inferSelect
 

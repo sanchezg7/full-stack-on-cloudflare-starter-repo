@@ -7,6 +7,7 @@
   "name": "user-application",
   "main": "worker/index.ts",
   "compatibility_date": "2025-06-17",
+  "preview_urls": false,
   "assets": {
     "binding": "ASSETS",
     "not_found_handling": "single-page-application"
@@ -14,23 +15,49 @@
   "observability": {
     "enabled": true
   },
-  "d1_databases": [
-    {
-      "binding": "DB",
-      "database_id": "fe1a2999-90ed-456e-9908-ed53ac4bc8bf",
-      "remote": true
+  "env": {
+    "stage": {
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_id": "fe1a2999-90ed-456e-9908-ed53ac4bc8bf",
+          "remote": true
+        }
+      ],
+      /**
+      * This is how you can bind to another worker without a fetch call
+      * It will make the type on cf-typegen. It will be type fetcher
+      */
+      "services": [
+        {
+          "binding": "BACKEND_SERVICE",
+          "service": "data-service-stage",
+          // use the deployed data-service in local context
+          "remote": true
+        }
+      ]
+    },
+    "production": {
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_id": "e56a2f3c-7798-465b-814f-5bdf648f7987"
+          // we don't develop against production, disable this just to be safe
+          // "remote": true
+        }
+      ],
+      /**
+      * This is how you can bind to another worker without a fetch call
+      * It will make the type on cf-typegen. It will be type fetcher
+      */
+      "services": [
+        {
+          "binding": "BACKEND_SERVICE",
+          "service": "data-service-production",
+          // use the deployed data-service in local context
+          "remote": true
+        }
+      ]
     }
-  ],
-  /**
-  * This is how you can bind to another worker without a fetch call
-  * It will make the type on cf-typegen. It will be type fetcher
-  */
-  "services": [
-    {
-      "binding": "BACKEND_SERVICE",
-      "service": "data-service",
-      // use the deployed data-service in local context
-      "remote": true
-    }
-  ]
+  }
 }
