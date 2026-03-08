@@ -1,6 +1,7 @@
 import { betterAuth } from "better-auth";
 import {drizzleAdapter} from "better-auth/adapters/drizzle";
 import {getDb} from "@/db/database";
+import {account, session, user, verification} from "@/drizzle-out/auth-schema";
 
 let auth: ReturnType<typeof betterAuth>;
 
@@ -33,7 +34,14 @@ export function getAuth(google: { clientId: string; clientSecret: string }) {
 
     auth = createBetterAuth(
         drizzleAdapter(getDb(), {
-            provider: "sqlite"
+            provider: "sqlite",
+            // this gives more context about what tables we have and what the deps are
+            schema: {
+                user,
+                session,
+                account,
+                verification,
+            }
         }),
         google
     );
