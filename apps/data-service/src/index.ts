@@ -6,6 +6,7 @@ import {handleLinkClick} from "@/queue-handlers/link-clicks";
 // export so it's available for cloudflare serverless
 export { DestinationEvaluationWorkflow } from "@/workflows/destination-evaluation-workflow";
 export { EvaluationScheduler } from "@/durable-objects/evaluation-scheduler";
+export { LinkClickTracker } from "@/durable-objects/link-click-tracker";
 
 /**
  * This is a worker entry point. It's a class based setup

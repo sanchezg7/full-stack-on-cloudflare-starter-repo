@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 import { cloudflareInfoSchema } from "@repo/data-ops/zod-schema/links";
-import {getDestinationForCountry, getRoutingDestinations} from "@/helpers/route-ops";
+import {captureLinkClickInBackground, getDestinationForCountry, getRoutingDestinations} from "@/helpers/route-ops";
 import { LinkClickMessageType } from "@repo/data-ops/zod-schema/queue";
 
 export const App = new Hono<{Bindings: Env}>();
@@ -22,6 +22,21 @@ export const App = new Hono<{Bindings: Env}>();
 // 	});
 // })
 
+
+App.get('/click-socket', async (c) => {
+	const upgradeHeader = c.req.header('Upgrade');
+	if (!upgradeHeader || upgradeHeader !== 'websocket') {
+		return c.text('Expected Upgrade: websocket', 426);
+	}
+
+	// headers because then you can extend custom auth as well, here (instead of passing via param)
+	// const accountId = '12345';// c.req.header('accound-id')
+	const accountId = c.req.header('account-id');
+	if (!accountId) return  c.text('No Headers', 404);
+	const doId = c.env.LINK_CLICK_TRACKER_OBJECT.idFromName(accountId);
+	const stub = c.env.LINK_CLICK_TRACKER_OBJECT.get(doId);
+	return await stub.fetch(c.req.raw)
+})
 /**
  * We redirect the user AND kick off a fire and forget event on the queue so that this redirect is fast as possible
  * We ensure the change is still tracked but we decouple the speed to process that from the actual redirect.
@@ -35,6 +50,7 @@ App.get('/:id', async (c) => {
 	}
 	const cfHeader = cloudflareInfoSchema.safeParse(c.req.raw.cf);
 	if(cfHeader.success === false){
+		console.log('[hono-app] Invalid CF header:', JSON.stringify(c.req.raw.cf), 'error:', cfHeader.error);
 		return c.text('Invalid CF header', 400);
 	}
 
@@ -62,20 +78,20 @@ App.get('/:id', async (c) => {
 	 it's great for less critical tasks like analytics
 	 */
 	c.executionCtx.waitUntil(
-		c.env.QUEUE.send(queueMessage, {
-			// You won't have to parse this if you specify it. The lib will do it for you
-			// contentType: "json",
-			/**
-			// the data goes to the queue but isn't processed by the consumer. E.g. twilio api to send sms texts
-			 * Stick the twilio id in the queue. and then wait 10 minutes
-			 * You can then check the id in the future to see how the twilio message is in state
-			 */
-			// delaySeconds: 10 * 66
-		})
+		captureLinkClickInBackground(c.env, queueMessage)
 	)
 
 	return c.redirect(destination);
 })
+
+// App.get('/link-click/:accountId', async (c) => {
+// 	const accountId = c.req.param('accountId')
+// 	const doId = c.env.LINK_CLICK_TRACKER_OBJECT.idFromName(accountId);
+// 	const stub = c.env.LINK_CLICK_TRACKER_OBJECT.get(doId);
+// 	// it's a fetch because it's actually a special type of compute. we send the raw request
+// 	return await stub.fetch(c.req.raw)
+// })
+
 
 // -----------
 // we are starting over with a more simple solution

@@ -2,6 +2,12 @@
 
 This template provides a fully integrated setup of TanStack React Router, tRPC, and Cloudflare Workers, allowing you to build full-stack applications that run on the edge.
 
+## Get Started
+
+### Environment
+Check out `.env.example` to see what environment variables you need to set up.
+For now VITE_BASE_URL is set to the deployed url of the application. You can set it to `localhost:3000` if you want to proxy via the local instance, instead.
+
 ## Features
 
 - [TanStack Router](https://tanstack.com/router) for type-safe, powerful routing
