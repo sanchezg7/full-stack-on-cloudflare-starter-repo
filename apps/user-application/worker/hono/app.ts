@@ -11,7 +11,7 @@ App.all("/trpc/*", (c) => {
         req: c.req.raw,
         router: appRouter,
         createContext: () => {
-            createContext({ req: c.req.raw, env: c.env, workerCtx: c.executionCtx })
+            return createContext({ req: c.req.raw, env: c.env, workerCtx: c.executionCtx })
         }
     });
 });
