@@ -9,7 +9,7 @@
     "dev": "concurrently \"pnpm run dev-frontend\" \"pnpm run dev-data-service\"",
     "deploy:all": "pnpm run build-package && pnpm --filter data-service --filter user-application run deploy",
     "deploy:data-service": "pnpm run build-package && pnpm --filter data-service run deploy",
-    "deploy:user-application": "pnpm run build-package && pnpm --filter user-application run deploy",
+    "deploy:user-application": "pnpm run build-package && pnpm --filter user-application run deploy:stage",
     "cf-typegen": "pnpm --filter \"./apps/**\" run cf-typegen"
   },
   "keywords": [],
