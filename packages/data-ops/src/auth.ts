@@ -27,7 +27,7 @@ export function createBetterAuth(
     });
 };
 
-export function getAuth(google: { clientId: string; clientSecret: string }) {
+export function getAuth(google: { clientId: string; clientSecret: string }): ReturnType<typeof betterAuth>  {
     if (auth) {
         return auth;
     }
