@@ -30,7 +30,7 @@
       "services": [
         {
           "binding": "BACKEND_SERVICE",
-          "service": "data-service",
+          "service": "data-service-stage",
           // use the deployed data-service in local context
           "remote": true
         }
