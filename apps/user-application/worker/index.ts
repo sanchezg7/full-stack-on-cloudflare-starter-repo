@@ -17,6 +17,7 @@ export default {
                     createContext({req: request, env: env, workerCtx: ctx}),
             });
         }
+        // We want to proxy /click-socket to the data-service
         return env.ASSETS.fetch(request);
     },
 } satisfies ExportedHandler<ServiceBindings>;
