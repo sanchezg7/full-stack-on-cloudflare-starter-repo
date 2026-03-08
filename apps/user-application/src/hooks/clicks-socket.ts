@@ -18,9 +18,10 @@ export function useClickSocket() {
 
   useEffect(() => {
     const connect = () => {
-      const protocol = window.location.protocol === "https:" ? "wss:" : "wss:";
+      const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
       const socket = new WebSocket(
-          `${protocol}//data-service.noisy-resonance-8ddf.workers.dev/click-socket`,
+          // `${protocol}//data-service.noisy-resonance-8ddf.workers.dev/click-socket`,
+          `${protocol}//${import.meta.env.VITE_BASE_HOST}/click-socket`,
       );
 
       socket.onopen = () => {
