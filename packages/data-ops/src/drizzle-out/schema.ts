@@ -33,3 +33,5 @@ export const destinationEvaluations = sqliteTable("destination_evaluations", {
 	index("idx_destination_evaluations_account_time").on(table.accountId, table.createdAt),
 ]);
 
+export type Link = typeof links.$inferSelect
+
