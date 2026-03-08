@@ -4,6 +4,10 @@ import {getDb} from "@/db/database";
 
 let auth: ReturnType<typeof betterAuth>;
 
+/**
+ * Better auth can generate schemas for drizzle on our behalf
+ * https://better-auth.com/docs/basic-usage
+ */
 export function createBetterAuth(
     database: NonNullable<Parameters<typeof betterAuth>[0]>["database"],
     google?: { clientId: string; clientSecret: string },
