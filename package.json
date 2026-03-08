@@ -11,7 +11,7 @@
     "deploy:stage:data-service": "pnpm run build-package && pnpm --filter data-service run deploy:stage",
     "deploy:production:data-service": "pnpm run build-package && pnpm --filter data-service run deploy:production",
     "deploy:stage:user-application": "pnpm run build-package && pnpm --filter user-application run deploy:stage",
-    "deploy:production:user-application": "pnpm run build-package && pnpm --filter user-application run deploy:stage",
+    "deploy:production:user-application": "pnpm run build-package && pnpm --filter user-application run deploy:production",
     "cf-typegen": "pnpm --filter \"./apps/**\" run cf-typegen"
   },
   "keywords": [],
