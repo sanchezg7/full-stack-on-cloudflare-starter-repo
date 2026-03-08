@@ -14,23 +14,27 @@
   "observability": {
     "enabled": true
   },
-  "d1_databases": [
-    {
-      "binding": "DB",
-      "database_id": "fe1a2999-90ed-456e-9908-ed53ac4bc8bf",
-      "remote": true
+  "env": {
+    "stage": {
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_id": "fe1a2999-90ed-456e-9908-ed53ac4bc8bf",
+          "remote": true
+        }
+      ],
+      /**
+      * This is how you can bind to another worker without a fetch call
+      * It will make the type on cf-typegen. It will be type fetcher
+      */
+      "services": [
+        {
+          "binding": "BACKEND_SERVICE",
+          "service": "data-service",
+          // use the deployed data-service in local context
+          "remote": true
+        }
+      ]
     }
-  ],
-  /**
-  * This is how you can bind to another worker without a fetch call
-  * It will make the type on cf-typegen. It will be type fetcher
-  */
-  "services": [
-    {
-      "binding": "BACKEND_SERVICE",
-      "service": "data-service",
-      // use the deployed data-service in local context
-      "remote": true
-    }
-  ]
+  }
 }
