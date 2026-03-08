@@ -154,18 +154,21 @@
 						//				"retry_delay": 5
 					},
 					/**
-					* Consume from the dead letter queue
+					* This is needed in order to actually consume from the dead letter queue
 					*/
 					{
-						"queue": "smart-links-data-dead-letter-stage",
+						"queue": "smart-links-data-dead-letter-production",
 						"retry_delay": 0
 					}
 				],
 				"producers": [
+					/**
+					 * This is needed to actually produce to the queue
+					 */
 					{
 						// this is how we access it in the code
 						"binding": "QUEUE",
-						"queue": "smart-links-data-queue-stage"
+						"queue": "smart-links-data-queue-production"
 					}
 				]
 			},
