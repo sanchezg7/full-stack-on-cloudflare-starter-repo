@@ -71,6 +71,7 @@ export class LinkClickTracker extends DurableObject {
 			socket.send(JSON.stringify(clickData.clicks));
 		}
 
+		// not deleting these for now because I want to see all of the clicks since activity is low
 		// await this.flushOffsetTimes(clickData.mostRecentTime, clickData.oldestTime);
 		// deleteClicksBefore(this.sql, clickData.oldestTime)
 	}
