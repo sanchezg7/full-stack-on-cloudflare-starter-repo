@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { LogOut, User } from "lucide-react";
 import { useState } from "react";
+import {useNavigate} from "@tanstack/react-router";
 
 // Mock authClient with dummy data
 // const authClient = {
@@ -42,12 +43,16 @@ type UserProfilePopupProps = {
 function UserProfilePopup({ data, children }: UserProfilePopupProps) {
   const [loading, setLoading] = useState(false);
 
+  // tanstack router
+  const nav = useNavigate();
+
   const handleLogout = async () => {
     setLoading(true);
     await authClient.signOut({
       fetchOptions: {
         onSuccess: () => {
-          window.location.reload();
+          // window.location.reload();
+          nav({ to: "/"})
         },
       },
     });
