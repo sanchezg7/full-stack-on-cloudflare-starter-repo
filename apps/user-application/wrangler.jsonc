@@ -10,7 +10,9 @@
   "preview_urls": false,
   "assets": {
     "binding": "ASSETS",
-    "not_found_handling": "single-page-application"
+    "not_found_handling": "single-page-application",
+    // make sure to run these first for these paths
+    "run_worker_first": ["/api/auth/*", "/trpc/*", "/click-socket"]
   },
   "observability": {
     "enabled": true
