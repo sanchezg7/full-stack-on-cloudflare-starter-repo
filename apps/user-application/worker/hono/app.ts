@@ -1,4 +1,5 @@
 import { Hono } from 'hono';
+import { createMiddleware } from 'hono/factory';
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import { appRouter } from "@/worker/trpc/router.ts";
 import { createContext } from "@/worker/trpc/context";
@@ -6,7 +7,15 @@ import { getAuth } from "@repo/data-ops/auth";
 
 export const App = new Hono<{ Bindings: ServiceBindings }>();
 
-App.all("/trpc/*", (c) => {
+/**
+ * We only want to protect trpc, we want to auth to not be blocked (so that people can actually auth)
+ */
+const authMiddleware = createMiddleware(async (c, next) => {
+    console.log("Auth Middleware Called");
+    await next();
+})
+
+App.all("/trpc/*", authMiddleware, (c) => {
     return fetchRequestHandler({
         endpoint: "/trpc",
         req: c.req.raw,
@@ -17,7 +26,7 @@ App.all("/trpc/*", (c) => {
     });
 });
 
-App.get("/click-socket", async (c) => {
+App.get("/click-socket", authMiddleware, async (c) => {
     const headers = new Headers(c.req.raw.headers);
     // We will manually set this until the authentication logic is implemented
     headers.set("account-id", "1234567890");
