@@ -1,3 +1,4 @@
+import { authClient } from "./client";
 import {
   Dialog,
   DialogContent,
@@ -11,27 +12,27 @@ import { LogOut, User } from "lucide-react";
 import { useState } from "react";
 
 // Mock authClient with dummy data
-const authClient = {
-  useSession: () => ({
-    data: {
-      user: {
-        name: "John Doe",
-        email: "john.doe@example.com",
-        image: "https://github.com/shadcn.png",
-      },
-    },
-    isPending: false,
-  }),
-  signOut: async ({
-    fetchOptions,
-  }: {
-    fetchOptions: { onSuccess: () => void };
-  }) => {
-    // Simulate async operation
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    fetchOptions.onSuccess();
-  },
-};
+// const authClient = {
+//   useSession: () => ({
+//     data: {
+//       user: {
+//         name: "John Doe",
+//         email: "john.doe@example.com",
+//         image: "https://github.com/shadcn.png",
+//       },
+//     },
+//     isPending: false,
+//   }),
+//   signOut: async ({
+//     fetchOptions,
+//   }: {
+//     fetchOptions: { onSuccess: () => void };
+//   }) => {
+//     // Simulate async operation
+//     await new Promise((resolve) => setTimeout(resolve, 1000));
+//     fetchOptions.onSuccess();
+//   },
+// };
 
 type UserProfilePopupProps = {
   data: Awaited<ReturnType<typeof authClient.useSession>>["data"];
