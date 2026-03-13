@@ -8,25 +8,25 @@ import {
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { siGoogle } from "simple-icons";
-
+import { authClient } from "./client";
 import { useState } from "react";
 
 // Mock authClient with dummy data
-const authClient = {
-  signIn: {
-    social: async ({
-      provider,
-      callbackURL,
-    }: {
-      provider: string;
-      callbackURL: string;
-    }) => {
-      // Simulate async operation
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      console.log("Fake Action", provider, callbackURL);
-    },
-  },
-};
+// const authClient = {
+//   signIn: {
+//     social: async ({
+//       provider,
+//       callbackURL,
+//     }: {
+//       provider: string;
+//       callbackURL: string;
+//     }) => {
+//       // Simulate async operation
+//       await new Promise((resolve) => setTimeout(resolve, 1000));
+//       console.log("Fake Action", provider, callbackURL);
+//     },
+//   },
+// };
 
 interface LoginPopupProps {
   children: React.ReactNode;
@@ -38,6 +38,7 @@ export function LoginPopup({ children }: LoginPopupProps) {
     setLoading(true);
     await authClient.signIn.social({
       provider: "google",
+      // this tells what route to go back to once authentication is complete
       callbackURL: "/app",
     });
     setLoading(false);

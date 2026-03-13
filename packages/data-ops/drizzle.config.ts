@@ -10,6 +10,7 @@ const config: Config = {
     token: process.env.CLOUDFLARE_D1_TOKEN!,
   },
   tablesFilter: ["!_cf_KV"],
+  schema: ["./src/drizzle-out/auth-schema.ts"]
 };
 
 export default config satisfies Config;
