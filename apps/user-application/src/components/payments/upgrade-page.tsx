@@ -21,6 +21,7 @@ import { CancelSubscriptionDialog } from "./cancel-subscription-dialog";
 
 const plans = [
     {
+        // these names line up with the source of truth
         name: "Basic",
         price: 9,
         description: "Perfect for individuals getting started",
