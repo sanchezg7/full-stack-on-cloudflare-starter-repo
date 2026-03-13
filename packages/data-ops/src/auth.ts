@@ -1,7 +1,7 @@
 import { betterAuth } from "better-auth";
 import {drizzleAdapter} from "better-auth/adapters/drizzle";
 import {getDb} from "@/db/database";
-import {account, session, user, verification} from "@/drizzle-out/auth-schema";
+import {account, session, user, verification, subscription} from "@/drizzle-out/auth-schema";
 // use stripe plugin
 import { stripe } from "@better-auth/stripe";
 // use stripe SDK
@@ -72,6 +72,7 @@ export function getAuth(
                 session,
                 account,
                 verification,
+                subscription
             }
         }),
         stripe,
