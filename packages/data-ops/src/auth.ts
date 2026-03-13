@@ -15,12 +15,8 @@ let auth: ReturnType<typeof betterAuth>;
 type StripeConfig = {
     stripeWebhookSecret: string;
     plans: any[];
+    stripeApiKey?: string;
 }
-
-const stripeClient = new Stripe("", {
-    // this was auto completed
-    apiVersion: "2025-03-31.basil",
-})
 
 /**
  * Better auth can generate schemas for drizzle on our behalf
@@ -44,7 +40,8 @@ export function createBetterAuth(
         },
         plugins: [
             stripe({
-                stripeClient,
+                // this was set this way, but I doubt it
+                stripeClient: new Stripe(stripeConfig?.stripeApiKey || process.env.STRIPE_KEY!, { apiVersion: "2026-02-25.clover"}),
                 stripeWebhookSecret: stripeConfig?.stripeWebhookSecret ?? process.env.STRIPE_WEBHOOK_SECRET!,
                 // put the customer in stripe when the user signs up for the first time in our app. This will power the new schema for the users table
                 createCustomerOnSignUp: true,
