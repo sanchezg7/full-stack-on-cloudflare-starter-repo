@@ -21,6 +21,13 @@
   },
   "env": {
     "stage": {
+      // these are server side environment variables that we can inject (they aren't secret)
+      // the vars will get inlines in the generated types file
+      "vars": {
+        "STRIPE_PRODUCT_BASIC": "price_1TAexUEr2YwSN0FM7xn0VLBD",
+        "STRIPE_PRODUCT_PRO": "price_1TAf0NEr2YwSN0FMDklpAX9q",
+        "STRIPE_PRODUCT_ENTERPRISE": "price_1TAf20Er2YwSN0FMhJNZn9Qd"
+      },
       "d1_databases": [
         {
           "binding": "DB",

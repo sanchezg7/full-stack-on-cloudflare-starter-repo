@@ -18,7 +18,7 @@ const getAuthInstance = (env: Env) => {
         stripeWebhookSecret: env.STRIPE_WEBHOOK_KEY,
         stripeApiKey: env.STRIPE_SECRET_KEY,
         // prices from products will go here. Better auth will grab these price details. You could save this in the DB to fetch for more scalable solution
-        // check out docs for more dynamic pricing and quanitites of prices. You can also do free trial. Can do annual discounts. Check out better auth docs
+        // check out docs for more dynamic pricing and quantities of prices. You can also do free trial. Can do annual discounts. Check out better auth docs
         plans: [
             {
                 // name has to be lowercase
