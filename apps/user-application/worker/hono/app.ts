@@ -30,7 +30,7 @@ const getAuthInstance = (env: Env) => {
                 priceId: env.STRIPE_PRODUCT_PRO
             },
             {
-                "name": "pro",
+                "name": "enterprise",
                 priceId: env.STRIPE_PRODUCT_ENTERPRISE
             },
         ]
