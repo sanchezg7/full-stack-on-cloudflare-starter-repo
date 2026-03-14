@@ -12,6 +12,29 @@ const getAuthInstance = (env: Env) => {
     return getAuth({
         clientId: env.GOOGLE_CLIENT_ID,
         clientSecret: env.GOOGLE_CLIENT_SECRET
+    },
+    {
+        // this allows to process inside of app (for now I used the `stripe listen --forward-to localhost:3000/api/auth/stripe/webhook` and used web secret there)
+        stripeWebhookSecret: env.STRIPE_WEBHOOK_KEY,
+        stripeApiKey: env.STRIPE_SECRET_KEY,
+        // prices from products will go here. Better auth will grab these price details. You could save this in the DB to fetch for more scalable solution
+        // check out docs for more dynamic pricing and quantities of prices. You can also do free trial. Can do annual discounts. Check out better auth docs
+        plans: [
+            {
+                // name has to be lowercase
+                "name": "basic",
+                "priceId": env.STRIPE_PRODUCT_BASIC
+            },
+            {
+                "name": "pro",
+                priceId: env.STRIPE_PRODUCT_PRO
+            },
+            {
+                // if this doesn't match, stripe will give a not found error
+                "name": "enterprise",
+                priceId: env.STRIPE_PRODUCT_ENTERPRISE
+            },
+        ]
     });
 }
 
