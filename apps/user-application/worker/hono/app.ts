@@ -30,6 +30,7 @@ const getAuthInstance = (env: Env) => {
                 priceId: env.STRIPE_PRODUCT_PRO
             },
             {
+                // if this doesn't match, stripe will give a not found error
                 "name": "enterprise",
                 priceId: env.STRIPE_PRODUCT_ENTERPRISE
             },
