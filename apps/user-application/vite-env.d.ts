@@ -1,4 +1,5 @@
 interface ImportMetaEnv {
+  // this is for the data-service
   readonly VITE_BACKEND_HOST: string;
   readonly VITE_BASE_HOST: string;
 }
